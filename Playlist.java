@@ -67,6 +67,7 @@ public class Playlist implements Serializable {
 
         if(songList.size() == 0) {
             System.out.print("\nPlaylist is empty\n");
+            System.out.println();
         } else {
             System.out.println();
             for (int i = 0; i < songList.size(); i++) {
@@ -108,9 +109,9 @@ public class Playlist implements Serializable {
         songList = readInPlaylist();
 
         int totalDuration = 0;
-        for(int i = 0; i<songList.size(); i++) {
-            totalDuration = songList.get(i).getLength();
-            totalDuration += totalDuration;
+        for (StoreSongs storeSongs : songList) {
+            totalDuration += storeSongs.getLength();
+            //totalDuration += totalDuration;
         }
         System.out.print("the total playtime for " + songList.size() + " songs (");
         for(int i = 0; i<songList.size(); i++) {
@@ -149,6 +150,7 @@ public class Playlist implements Serializable {
             choice = menuChoice();
             switch (choice) {
                 case 1:
+                    playlist.songList = playlist.readInPlaylist();
                     playlist.songList.add(playlist.enterSong());
                     playlist.savePlaylist();
                     break;
@@ -174,9 +176,9 @@ public class Playlist implements Serializable {
 }
 
 class StoreSongs implements Serializable{
-    private String name;
-    private String artist;
-    private int length;
+    private final String name;
+    private final String artist;
+    private final int length;
 
     public StoreSongs(String name, String artist, int length) {
         this.name = name;
@@ -195,5 +197,4 @@ class StoreSongs implements Serializable{
     public int getLength() {
         return length;
     }
-
  }
