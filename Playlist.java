@@ -1,6 +1,7 @@
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class Playlist implements Serializable {
 
@@ -43,7 +44,8 @@ public class Playlist implements Serializable {
 
     }
 
-    public void showPlaylist() {
+    public void showPlaylist() throws IOException, ClassNotFoundException {
+        songList = readInPlaylist();
         if(songList.size() == 0) {
             System.out.println("\nPlaylist is empty\n");
         } else {
@@ -58,8 +60,10 @@ public class Playlist implements Serializable {
         }
     }
 
-    public void deleteSong() {
+    public void deleteSong() throws IOException, ClassNotFoundException {
         Scanner input = new Scanner(System.in);
+
+        songList = readInPlaylist();
 
         if(songList.size() == 0) {
             System.out.print("\nPlaylist is empty\n");
@@ -76,10 +80,13 @@ public class Playlist implements Serializable {
                 System.out.println(songList.remove((deleteChoice - 1)).getName() + " is removed from your library\n");
             }
         }
+        savePlaylist();
     }
 
-    public void findSongTitle() {
+    public void findSongTitle() throws IOException, ClassNotFoundException {
         Scanner input = new Scanner(System.in);
+
+        songList = readInPlaylist();
 
         System.out.print("Please input the title of the song: ");
         String findSong = input.nextLine();
@@ -96,7 +103,10 @@ public class Playlist implements Serializable {
         }
     }
 
-    public void totalDuration() {
+    public void totalDuration() throws IOException, ClassNotFoundException {
+
+        songList = readInPlaylist();
+
         int totalDuration = 0;
         for(int i = 0; i<songList.size(); i++) {
             totalDuration = songList.get(i).getLength();
@@ -112,18 +122,24 @@ public class Playlist implements Serializable {
         }
         System.out.println(") is: " + totalDuration);
     }
-   /* public void savePlaylist() throws IOException {
-        FileWriter writer = new FileWriter("playlist");
-        for(StoreSongs str: songList) {
-            writer.write(String.format("%s", str) + System.lineSeparator());
-        }
-        writer.close();
-    }*/
+   public void savePlaylist() throws IOException {
+       FileOutputStream fos = new FileOutputStream("playlist");
+       ObjectOutputStream oos = new ObjectOutputStream(fos);
+       oos.writeObject(songList);
+       oos.close();
+    }
 
-    public static void main(String[] args) {
+    public ArrayList<StoreSongs> readInPlaylist() throws IOException, ClassNotFoundException {
+        FileInputStream fis = new FileInputStream("playlist");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        ArrayList<StoreSongs> songList = (ArrayList<StoreSongs>) ois.readObject();
+        ois.close();
+        return songList;
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
         Playlist playlist = new Playlist();
-        Scanner input = new Scanner(System.in);
 
         boolean exit = false;
         int choice;
@@ -134,7 +150,7 @@ public class Playlist implements Serializable {
             switch (choice) {
                 case 1:
                     playlist.songList.add(playlist.enterSong());
-                    //playlist.savePlaylist();
+                    playlist.savePlaylist();
                     break;
                 case 2:
                     playlist.showPlaylist();
@@ -157,7 +173,7 @@ public class Playlist implements Serializable {
 
 }
 
-class StoreSongs {
+class StoreSongs implements Serializable{
     private String name;
     private String artist;
     private int length;
