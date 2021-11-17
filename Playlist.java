@@ -123,7 +123,8 @@ public class Playlist implements Serializable {
         }
         System.out.println(") is: " + totalDuration);
     }
-   public void savePlaylist() throws IOException {
+    
+    public void savePlaylist() throws IOException {
        FileOutputStream fos = new FileOutputStream("playlist");
        ObjectOutputStream oos = new ObjectOutputStream(fos);
        oos.writeObject(songList);
@@ -175,7 +176,7 @@ public class Playlist implements Serializable {
 
 }
 
-class StoreSongs implements Serializable{
+class StoreSongs implements Serializable {
     private final String name;
     private final String artist;
     private final int length;
